@@ -15,6 +15,13 @@ export function toCoords(board, tileIndex) {
   return new Coordinate({x, y});
 }
 
+const GameObject = Record({
+  id: null,
+  type: null
+});
+
+
+
 const Board = Record({
   boardSize: 0,
   tiles: [],

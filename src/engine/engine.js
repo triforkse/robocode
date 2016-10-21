@@ -11,7 +11,7 @@ function genId() {
 
 const Robot = Record({
   id: null,
-  ai: require("raw!../programs/default.txt"),
+  ai: "function() { return AI.idle(); }",
   health: 100
 });
 
@@ -108,26 +108,51 @@ function robotTurn(game, robot) {
 
 const uiAction = (game, action) => action(game);
 
+export function executeTurn(game, actions) {
+
+    const conditions = [
+      removeDeadRobots,
+      checkEndCondition,
+    ];
+
+      // User Input
+      game = actions.reduce(uiAction, game);
+      // AI - TODO: Do round robin of which robot goes first.
+      game = game.robots.valueSeq().reduce(robotTurn, game);
+      // Check Conditions
+      console.log(game);
+      game = conditions.reduce((game, condition) => condition(game), game);
+
+      return game;
+      // Output
+      // onGameTick(game);
+
+}
+
 export function run(initialGame, onGameTick, getInput) {
 
   let game = initialGame;
 
-  const conditions = [
-    removeDeadRobots,
-    checkEndCondition
-  ];
 
-  const gameLoop = () => {
-    // User Input
-    game = getInput().reduce(uiAction, game);
-    // AI - TODO: Do round robin of which robot goes first.
-    game = game.robots.valueSeq().reduce(robotTurn, game);
-    // Check Conditions
-    console.log(game);
-    game = conditions.reduce((game, condition) => condition(game), game);
-    // Output
-    onGameTick(game);
-  };
+  // const conditions = [
+  //   removeDeadRobots,
+  //   checkEndCondition
+  // ];
+  //
+   const gameLoop = () => {
+     game = executeTurn(game, getInput())
+
+  //   // User Input
+  //   game = getInput().reduce(uiAction, game);
+  //   // AI - TODO: Do round robin of which robot goes first.
+  //   game = game.robots.valueSeq().reduce(robotTurn, game);
+  //   // Check Conditions
+  //   console.log(game);
+  //   game = conditions.reduce((game, condition) => condition(game), game);
+  //   // Output
+     onGameTick(game);
+   };
+
 
   const speed = 2;
   return setInterval(gameLoop, 1000 / speed);
@@ -138,7 +163,9 @@ export function stop(engineId) {
 }
 
 export default {
+  executeTurn,
   run,
   stop,
-  createGame
+  createGame,
+  robotTurn,
 };

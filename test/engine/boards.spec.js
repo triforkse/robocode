@@ -4,8 +4,14 @@ import Dirs from '../../src/engine/directions.js';
 import {x0y0, x0y1, x1y0, x1y1} from './helpers.js'
 
 describe('Boards', () => {
-  const robot = 666;
-  const enemy = 777;
+  const robot = {
+    type: 'robot',
+    id: 666
+  };
+  const enemy = {
+    type: 'robot',
+    id: 777
+  };
 
   let board;
 

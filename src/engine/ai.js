@@ -15,8 +15,12 @@ function moveLeft() {
   return createAction(ActionTypes.MOVE, {direction: Dirs.WEST});
 }
 
-function moveRight() {
+export function moveRight() {
   return createAction(ActionTypes.MOVE, {direction: Dirs.EAST});
+}
+
+export function moveSouthEast() {
+  return createAction(ActionTypes.MOVE, {direction: Dirs.SOUTH_EAST});
 }
 
 function moveUp() {
@@ -126,6 +130,7 @@ export function idle() {
 }
 
 export default {
+  moveRight,
   randomAction,
   attackRandomly,
   chargeShield,
