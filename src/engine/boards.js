@@ -33,7 +33,8 @@ const Board = Record({
   place: function(id, x, y) {
     invariant(!this.isInBounds(x, y), `position out of bounds (${x},${y})`);
     const tile = toTileIndex(this, x, y);
-    return this.update('tiles', ts => ts.set(tile, id));
+    x = this.update('tiles', ts => ts.set(tile, id));
+    return x;
   },
 
   valueAt: function(x, y) {
@@ -58,7 +59,7 @@ const Board = Record({
       [Dirs.SOUTH]: (x,y) => ({x, y: y + 1}),
       [Dirs.SOUTH_WEST]: (x,y) => ({x: x - 1, y: y + 1}),
     };
-    
+
     const newCoords = moves[direction](x,y);
 
     if (newCoords) {

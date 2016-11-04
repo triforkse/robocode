@@ -4,13 +4,19 @@ import ActionTypes from './action_types';
 import Directions from './directions';
 
 function move(game, {robotId, direction}) {
-  const {board} = game;
-  const coords = board.positionOf(robotId);
+  const coords = game.board.positionOf(robotId);
   const {x, y} = coords;
 
-  const newCoords = board.getAdjacentCell(x, y, direction);
+  const newCoords = game.board.getAdjacentCell(x, y, direction);
 
-  if (newCoords && board.isCellEmpty(newCoords.x, newCoords.y)) {
+  const thingInPlace = game.board.valueAt(newCoords.x, newCoords.y);
+
+  if (thingInPlace !== null && thingInPlace.type === 'bomb') {
+    game = game.update("board", b => b.place(null, newCoords.x, newCoords.y));
+    game = decreaseRobotHealth(game, robotId, 10);
+  }
+
+  if (newCoords && game.board.isCellEmpty(newCoords.x, newCoords.y)) {
     return game.update("board", b => b.place(null, x, y).place(robotId, newCoords.x, newCoords.y));
   }
   else {
@@ -33,7 +39,7 @@ function attack(game, {robotId, direction}) {
 
   if (cell !== null && !board.isCellEmpty(cell.x, cell.y)) {
     const otherRobotId = board.valueAt(cell.x, cell.y);
-    return decreaseRobotHealth(game, otherRobotId, 100);
+    return decreaseRobotHealth(game, otherRobotId, 2);
   }
   else {
     return game;

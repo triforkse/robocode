@@ -6,7 +6,7 @@ require('./renderer.css')
 
 const boardSize = 500;
 
-function renderRobot(game, robotId, showHealth = true) {
+function renderRobot(game, robotId, {x, y}, {showHealth}) {
   return (
     <div className="robot">
       {showHealth && <div className="robot__health">{game.robots.get(robotId).health}</div>}
@@ -15,8 +15,40 @@ function renderRobot(game, robotId, showHealth = true) {
   );
 }
 
-function renderCell(game, tileSize, {x, y}, robotId) {
-  const robot = (robotId !== null) ? renderRobot(game, robotId) : <div>({x},{y})</div>;
+function renderBomb(game, robotId, {x, y}, {showHealth}) {
+  console.error('------------ rendering bomb', x, y);
+  return (
+    <div className="bomb">
+      <img className="robot__img" src={require(`./images/bomb.png`)} />
+    </div>
+  );
+}
+
+function renderEmptyCell(game, thingOnTile, {x, y}, viewOptions) {
+  return (<div>({x},{y})</div>)
+}
+
+function getRendererFor(thingOnTile) {
+  if (thingOnTile === null) {
+    return renderEmptyCell;
+  }
+  else if (Number.isInteger(thingOnTile)) {
+    return renderRobot;
+  }
+
+  switch (thingOnTile.type) {
+    case "bomb":
+      return renderBomb;
+    default:
+      return renderEmptyCell;
+  }
+
+}
+
+function renderCell(game, tileSize, {x, y}, thingOnTile) {
+
+
+  const robot = getRendererFor(thingOnTile)(game, thingOnTile, {x,y}, {showHealth: true});
   return <div style={{width: tileSize, height: tileSize}} className="board__cell" key={`${x}$${y}`}>{robot}</div>;
 }
 

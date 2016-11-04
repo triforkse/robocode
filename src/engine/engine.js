@@ -53,6 +53,10 @@ export function createGame(boardSize, robotCount) {
       break;
   }
 
+  //for (i = 0; i < 5; i++) {
+    board = board.place({type: 'bomb', id: 0}, 0, 1);
+  //}
+
   return new Game({boardSize, robots, board});
 }
 

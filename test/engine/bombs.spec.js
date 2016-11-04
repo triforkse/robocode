@@ -15,16 +15,22 @@ describe('Bombs', () => {
 
   beforeEach(() => {
     game = engine.createGame(2, 1);
-    game.board.place(bomb,1,1);
+    game = game.update('board', board => board.place(bomb,1,1));
+  });
+
+  describe('when placing a bomb', () => {
+    it('it is on the board', () => {
+      expect(game.board.valueAt(1,1)).toBe(bomb);
+    });
   });
 
   describe('when a robot steps on bomb', () => {
     it('loses health', () => {
       game = game.setIn(["robots", 0, "ai"], "function(me, others){return AI.moveSouthEast();}")
       const robot = game.robots.get(0);
-      const newGameState = engine.robotTurn(game, robot)
-      expect(newGameState.board.valueAt(1,1)).toBe(robot.id)
-      //expect(game.getRobot(robotId).health).toBe(90)
+      const newGameState = engine.robotTurn(game, robot);
+      expect(newGameState.board.valueAt(1,1)).toBe(robot.id);
+      expect(newGameState.robots.get(robot.id).health).toBe(90);
     });
   });
 });
